@@ -28,6 +28,7 @@ class ShipsState:
     dreadnaught: ShipType
     cruiser: ShipType
     destroyer: ShipType
+    carrier: ShipType
     fighter: ShipType
     spaceCannon: ShipType
     
@@ -39,7 +40,7 @@ class ShipsState:
             imgui.text("Defender")
         ## Names of the ships
         for ship in state.ShipTypes:
-            imgui.text(f"{ship.title}:")
+            imgui.text(f"{ship.title}")
             if imgui.begin_popup_context_item(f"{ship.shortTitle}##{side}"):
                 imgui.text(f"Attack:")
                 imgui.same_line()
@@ -177,12 +178,13 @@ class ShipsState:
     
     def __init__(self):
         self.ShipTypes = []
-        self.warSun = ShipType(ShipDefault(3,3,2),"War Sun","WS",0 , 2, 3, 3,2)
+        self.warSun = ShipType(ShipDefault(3,3,2),"War Sun    ","WS",0 , 2, 3, 3,2)
         self.capitalShip = ShipType(ShipDefault(2,6,2),"Capital Ship", "CS", 0, 1, 2, 6,2)
         self.dreadnaught = ShipType(ShipDefault(1,5,2),"Dreadnaught", "DR" , 0,5, 1, 5,2) 
-        self.cruiser = ShipType(ShipDefault(1,7,1),"Cruiser", "CR", 0, 8,1,7,1)
-        self.destroyer = ShipType(ShipDefault(1,6,1),"Destroyer", "DS", 0, 8,1,6,1)
-        self.fighter = ShipType(ShipDefault(1,9,1),"Fighter", "FI" , 0,20,1,9,1)
+        self.cruiser = ShipType(ShipDefault(1,7,1),"Cruiser  ", "CR", 0, 8,1,7,1)
+        self.destroyer = ShipType(ShipDefault(1,6,1),"Destroyer     ", "DS", 0, 8,1,6,1)
+        self.carrier = ShipType(ShipDefault(1,6,1),"Carrier       ", "CA", 0, 9,1,4,1)
+        self.fighter = ShipType(ShipDefault(1,9,1),"Fighter   ", "FI" , 0,20,1,9,1)
         self.spaceCannon = ShipType(ShipDefault(1,6,1),"Space Cannon", "SC" ,0,20,1,6,1)
 
         
@@ -192,6 +194,7 @@ class ShipsState:
         self.ShipTypes.append(self.dreadnaught);
         self.ShipTypes.append(self.cruiser);
         self.ShipTypes.append(self.destroyer);
+        self.ShipTypes.append(self.carrier);
         self.ShipTypes.append(self.fighter);
         self.ShipTypes.append(self.spaceCannon);
 
