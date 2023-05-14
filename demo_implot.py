@@ -133,10 +133,22 @@ class ShipsState:
         num_ships = 0
         num_types = 0
         health = 0
+        fighter_health = 0
+        weak_ships = 0
+        damage_capital = 0
+        destroy_capital = 0
+
         for ship in state.ShipTypes:
             num_ships += ship.count*ship.rolls
             num_types += 1 if ship.count > 0 else 0
             health += ship.count*ship.health
+            if ship.health > 1:
+                damage_capital += ship.count
+                destroy_capital += ship.count
+            elif ship.title == "Fighter   ":
+                fighter_health += ship.count*ship.health
+            else:
+                weak_ships += ship.count
     
         probabilities = [] 
 
@@ -174,7 +186,7 @@ class ShipsState:
         total_prob = [x for x in total_prob if x != 0]
 
 
-        return total_prob, health
+        return total_prob, health, fighter_health, weak_ships, damage_capital, destroy_capital
     
     def __init__(self):
         self.ShipTypes = []
@@ -198,6 +210,8 @@ class ShipsState:
         self.ShipTypes.append(self.fighter);
         self.ShipTypes.append(self.spaceCannon);
 
+        
+
 
 
 
@@ -215,14 +229,14 @@ def demo_gui():
         """
     )
     imgui.begin_child("Attacker##main", ImVec2((imgui.get_content_region_max().x * 0.49) , 130))
-    total_prob_1, health_1 = state1.ship_input(1)
+    total_prob_1, health_1, fighters_1, weak_1, damage_1, destroy_1 = state1.ship_input(1)
     imgui.end_child()
     imgui.same_line()
     imgui.begin_child("borderlands", ImVec2((imgui.get_content_region_max().x * (1 - 0.48*2)), 130))
     imgui.end_child()
     imgui.same_line()
     imgui.begin_child("Defender##main", ImVec2((imgui.get_content_region_max().x * 0.49), 130))
-    total_prob_2, health_2 = state2.ship_input(2)
+    total_prob_2, health_2, fighters_2, weak_2, damage_2, destroy_2 = state2.ship_input(2)
     imgui.end_child()
 
 
@@ -232,10 +246,15 @@ def demo_gui():
         implot.setup_axes("Hits", "Probability")
         implot.setup_axes_limits(-0.5, 10, 0, 1)
         implot.plot_bars("Hits", np.array(total_prob_1), .9)
+
         implot.plot_line("Health1", np.array([health_2, health_2]), np.array([0, 1]), 1)
+        implot.plot_line("fighters1", np.array([fighters_2, fighters_2]), np.array([0, 1]), 1)
+        implot.plot_line("weak1", np.array([weak_2 + fighters_2, weak_2 + fighters_2]), np.array([0, 1]), 1)
+        implot.plot_line("damage1", np.array([damage_2 + weak_2 + fighters_2, damage_2 + weak_2 + fighters_2]), np.array([0, 1]), 1)
+        implot.plot_line("destroy1", np.array([destroy_2 + damage_2 + weak_2 + fighters_2, destroy_2 + damage_2 + weak_2 + fighters_2]), np.array([0, 1]), 1)
         #Display the height of the bar on top of the bar
         for i in range(len(total_prob_1)):
-            implot.plot_text(f"{100*total_prob_1[i]:.3}", i, total_prob_1[i] + 0.02)
+            implot.plot_text(f"{100*total_prob_1[i]:.3}%", i, total_prob_1[i] + 0.02)
         implot.end_plot()
         implot.set_next_axes_to_fit()
     else:
@@ -249,9 +268,14 @@ def demo_gui():
         implot.setup_axes_limits(-0.5, 10, 0, 1)
         implot.plot_bars("Hits", np.array(total_prob_2), .9)
         implot.plot_line("Health2", np.array([health_1, health_1]), np.array([0, 1]), 1)
+        implot.plot_line("fighters2", np.array([fighters_1, fighters_1]), np.array([0, 1]), 1)
+        implot.plot_line("weak2", np.array([weak_1 + fighters_1, weak_1 + fighters_1]), np.array([0, 1]), 1)
+        implot.plot_line("damage2", np.array([damage_1 + weak_1 + fighters_1, damage_1 + weak_1 + fighters_1]), np.array([0, 1]), 1)
+        implot.plot_line("destroy2", np.array([destroy_1 + damage_1 + weak_1 + fighters_1, destroy_1 + damage_1 + weak_1 + fighters_1]), np.array([0, 1]), 1)
+
         #Display the height of the bar on top of the bar
         for i in range(len(total_prob_2)):
-            implot.plot_text(f"{100*total_prob_2[i]:.3}", i, total_prob_2[i] + 0.02)
+            implot.plot_text(f"{100*total_prob_2[i]:.3}%", i, total_prob_2[i] + 0.02)
         implot.end_plot()
         implot.set_next_axes_to_fit()
     else:
